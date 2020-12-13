@@ -22,22 +22,3 @@ select count(*) from
 (select rowid,ch, max(indx) as inx, count(*) as cnt from data, alpha_ser
 where contains(val, ch)
 group by rowid,ch having inx = cnt);
-
-with words as
-(
-select column1 as word
-from values
-    ('abc')
-  , ('defg')
-  , ('h'))
-, created_arrays as (
-  select
-      word
-    , regexp_replace(word, '(1|.)', '\\1|') as padded_string
-    , split(padded_string, '|') as created_array_with_blank_end
-    , array_slice(created_array_with_blank_end, 0, - 1) as created_array
-  from words
-)
-select *,value::string from created_arrays
-    , lateral flatten(input => created_array) flattened
-;
